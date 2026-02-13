@@ -60,10 +60,8 @@ class PresenceTracker(App[PresenceTrackerConfig]):
 
     async def on_tracker_change(
         self,
-        event: RawStateChangeEvent,
         new_state: D.StateNew[states.DeviceTrackerState],
         old_state: D.MaybeStateOld[states.DeviceTrackerState],
-        entity_id: D.EntityId,
     ) -> None:
         """Device tracker state changed."""
         cfg = self.app_config

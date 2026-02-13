@@ -12,7 +12,7 @@ Demo entities:
 
 from pydantic_settings import SettingsConfigDict
 
-from hassette import App, AppConfig, D, RawStateChangeEvent, entities, states
+from hassette import App, AppConfig, entities
 
 
 class MotionLightsConfig(AppConfig):
@@ -57,11 +57,7 @@ class MotionLights(App[MotionLightsConfig]):
         if motion_state:
             self.logger.info("Current motion state: %s", motion_state.value)
 
-    async def on_motion_detected(
-        self,
-        event: RawStateChangeEvent,
-        new_state: D.StateNew[states.BinarySensorState],
-    ) -> None:
+    async def on_motion_detected(self) -> None:
         """Motion detected — turn the light on at boost brightness."""
         cfg = self.app_config
         self.logger.info("Motion detected on %s", cfg.motion_entity)
@@ -74,11 +70,7 @@ class MotionLights(App[MotionLightsConfig]):
         updated = await light.refresh()
         self.logger.debug("Light state after turn_on: %s (brightness=%s)", updated.value, updated.attributes.brightness)
 
-    async def on_motion_cleared(
-        self,
-        event: RawStateChangeEvent,
-        new_state: D.StateNew[states.BinarySensorState],
-    ) -> None:
+    async def on_motion_cleared(self) -> None:
         """Motion cleared — dim down or turn off."""
         cfg = self.app_config
         self.logger.info("Motion cleared on %s", cfg.motion_entity)

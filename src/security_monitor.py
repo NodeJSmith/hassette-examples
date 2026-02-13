@@ -10,7 +10,7 @@ Demo entities:
     - binary_sensor.basement_floor_wet
 """
 
-from hassette import AppConfig, AppSync, RawStateChangeEvent
+from hassette import AppConfig, AppSync
 from hassette.events import CallServiceEvent
 
 
@@ -53,7 +53,7 @@ class SecurityMonitor(AppSync[SecurityMonitorConfig]):
             data.service_data,
         )
 
-    def on_moisture_detected(self, event: RawStateChangeEvent) -> None:
+    def on_moisture_detected(self) -> None:
         """Moisture sensor triggered — basement floor is wet."""
         self.logger.warning(
             "ALERT: Moisture detected on basement floor! Immediate attention required."

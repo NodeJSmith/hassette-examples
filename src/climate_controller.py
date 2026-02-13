@@ -14,7 +14,7 @@ from typing import Annotated
 
 from pydantic_settings import SettingsConfigDict
 
-from hassette import A, App, AppConfig, C, D, RawStateChangeEvent, states
+from hassette import A, App, AppConfig, C, D, states
 
 
 class ClimateControllerConfig(AppConfig):
@@ -62,7 +62,6 @@ class ClimateController(App[ClimateControllerConfig]):
 
     async def on_temp_increased(
         self,
-        event: RawStateChangeEvent,
         new_state: D.StateNew[states.SensorState],
         old_state: D.MaybeStateOld[states.SensorState],
         entity_id: D.EntityId,
@@ -82,7 +81,6 @@ class ClimateController(App[ClimateControllerConfig]):
 
     async def on_temp_decreased(
         self,
-        event: RawStateChangeEvent,
         new_state: D.StateNew[states.SensorState],
         old_state: D.MaybeStateOld[states.SensorState],
         entity_id: D.EntityId,
@@ -102,7 +100,6 @@ class ClimateController(App[ClimateControllerConfig]):
 
     async def on_hvac_temp_change(
         self,
-        event: RawStateChangeEvent,
         current_temp: Annotated[float | None, A.get_attr_new("current_temperature")],
     ) -> None:
         """HVAC current_temperature attribute changed."""
