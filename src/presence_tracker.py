@@ -12,14 +12,10 @@ Demo entities:
     - zone.home
 """
 
-import logging
-
-from hassette.bus.listeners import Subscription
 from pydantic_settings import SettingsConfigDict
 
 from hassette import App, AppConfig, C, D, RawStateChangeEvent, states
-
-logger = logging.getLogger(__name__)
+from hassette.bus.listeners import Subscription
 
 
 class PresenceTrackerConfig(AppConfig):

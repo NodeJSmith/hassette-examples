@@ -10,14 +10,11 @@ Demo entities:
     - switch.ac
 """
 
-import logging
 from typing import Annotated
 
 from pydantic_settings import SettingsConfigDict
 
 from hassette import A, App, AppConfig, C, D, RawStateChangeEvent, states
-
-logger = logging.getLogger(__name__)
 
 
 class ClimateControllerConfig(AppConfig):

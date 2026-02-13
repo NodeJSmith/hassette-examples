@@ -11,11 +11,7 @@ Demo entities:
     - sun.sun
 """
 
-import logging
-
 from hassette import App, AppConfig, RawStateChangeEvent
-
-logger = logging.getLogger(__name__)
 
 CACHE_KEY_POSITIONS = "last_cover_positions"
 

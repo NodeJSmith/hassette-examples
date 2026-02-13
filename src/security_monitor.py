@@ -10,12 +10,8 @@ Demo entities:
     - binary_sensor.basement_floor_wet
 """
 
-import logging
-
 from hassette import AppConfig, AppSync, RawStateChangeEvent
 from hassette.events import CallServiceEvent
-
-logger = logging.getLogger(__name__)
 
 
 class SecurityMonitorConfig(AppConfig):

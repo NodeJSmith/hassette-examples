@@ -10,13 +10,9 @@ Demo entities:
     - light.ceiling_lights
 """
 
-import logging
-
 from pydantic_settings import SettingsConfigDict
 
 from hassette import App, AppConfig, D, RawStateChangeEvent, entities, states
-
-logger = logging.getLogger(__name__)
 
 
 class MotionLightsConfig(AppConfig):
