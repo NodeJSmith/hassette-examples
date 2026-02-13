@@ -47,6 +47,7 @@ class ClimateController(App[ClimateControllerConfig]):
         self.bus.on_state_change(
             "sensor.*temperature*",
             changed=C.Decreased(),
+            changed_from=C.Present(),
             handler=self.on_temp_decreased,
         )
 
@@ -63,12 +64,18 @@ class ClimateController(App[ClimateControllerConfig]):
     async def on_temp_increased(
         self,
         new_state: D.StateNew[states.SensorState],
-        old_state: D.MaybeStateOld[states.SensorState],
+        old_state: D.StateOld[states.SensorState],
         entity_id: D.EntityId,
     ) -> None:
-        """An outdoor temperature sensor increased."""
-        old_val = old_state.value if old_state else None
-        self.logger.info("%s temperature increased: %s -> %s", entity_id, old_val, new_state.value)
+        """An outdoor temperature sensor increased.
+
+        Uses D.StateOld (not D.MaybeStateOld) — if there is no previous state
+        (e.g. entity first appears), the handler is skipped entirely. This is
+        useful when your handler logic requires the old state to be meaningful.
+        Note that a skipped invocation due to missing old state will log an error;
+        for a quieter approach see on_temp_decreased which uses changed_from instead.
+        """
+        self.logger.info("%s temperature increased: %s -> %s", entity_id, old_state.value, new_state.value)
 
         try:
             temp = float(new_state.value) if new_state.value is not None else None
@@ -82,12 +89,17 @@ class ClimateController(App[ClimateControllerConfig]):
     async def on_temp_decreased(
         self,
         new_state: D.StateNew[states.SensorState],
-        old_state: D.MaybeStateOld[states.SensorState],
+        old_state: D.StateOld[states.SensorState],
         entity_id: D.EntityId,
     ) -> None:
-        """An outdoor temperature sensor decreased."""
-        old_val = old_state.value if old_state else None
-        self.logger.info("%s temperature decreased: %s -> %s", entity_id, old_val, new_state.value)
+        """An outdoor temperature sensor decreased.
+
+        Uses changed_from=C.Present() on the bus subscription to prevent
+        this handler from firing when there is no previous state. This is
+        cleaner than relying on D.StateOld alone — the event is filtered
+        before the handler is called, so no error is logged.
+        """
+        self.logger.info("%s temperature decreased: %s -> %s", entity_id, old_state.value, new_state.value)
 
         try:
             temp = float(new_state.value) if new_state.value is not None else None
