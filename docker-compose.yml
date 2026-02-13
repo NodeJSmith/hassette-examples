@@ -1,0 +1,40 @@
+services:
+  homeassistant:
+    container_name: demo-homeassistant
+    image: homeassistant/home-assistant:stable
+    ports:
+      - "8123:8123"
+    volumes:
+      - ./config/ha:/config
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  hassette:
+    image: ghcr.io/nodejsmith/hassette:latest-py3.13
+    container_name: demo-hassette
+    restart: unless-stopped
+    depends_on:
+      homeassistant:
+        condition: service_healthy
+    volumes:
+      - ./config:/config
+      - ./src:/apps
+      - data:/data
+    environment:
+      - HASSETTE__BASE_URL=http://homeassistant:8123
+      - HASSETTE__TOKEN=${HA_TOKEN}
+      - HASSETTE__APP_DIR=/apps
+      - TZ=America/New_York
+      - LOG_LEVEL=info
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8126/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  data:

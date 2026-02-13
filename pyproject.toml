@@ -1,0 +1,14 @@
+[project]
+name = "hassette-examples"
+version = "0.1.0"
+description = "Example apps for the Hassette Home Assistant automation framework"
+requires-python = ">=3.11"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Jessica Smith" }]
+
+dependencies = ["hassette"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
