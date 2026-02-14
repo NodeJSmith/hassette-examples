@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Virtual environments
+.venv
+venv/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Unit test / coverage reports
+.coverage
+.coverage.*
+.pytest_cache/
+htmlcov/
+
+# mypy / pyright
+.mypy_cache/
+.pytype/
+
+# Ruff
+.ruff_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# Docker volumes (local bind mounts)
+hassette_data/
+volumes/
+
+# UV
+#uv.lock

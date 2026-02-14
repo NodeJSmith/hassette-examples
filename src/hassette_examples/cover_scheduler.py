@@ -74,14 +74,20 @@ class CoverScheduler(App[CoverSchedulerConfig]):
         self.logger.info("Opening all covers (weekday morning schedule)")
         for entity_id, cover in self.states.cover:
             self.logger.info("Opening %s (current state: %s)", entity_id, cover.value)
-            await self.api.call_service("cover", "open_cover", target={"entity_id": entity_id})
+            try:
+                await self.api.call_service("cover", "open_cover", target={"entity_id": entity_id})
+            except Exception:
+                self.logger.exception("Failed to open %s", entity_id)
 
     async def close_all_covers(self) -> None:
         """Close all covers."""
         self.logger.info("Closing all covers (nightly schedule)")
         for entity_id, cover in self.states.cover:
             self.logger.info("Closing %s (current state: %s)", entity_id, cover.value)
-            await self.api.call_service("cover", "close_cover", target={"entity_id": entity_id})
+            try:
+                await self.api.call_service("cover", "close_cover", target={"entity_id": entity_id})
+            except Exception:
+                self.logger.exception("Failed to close %s", entity_id)
 
     async def log_cover_positions(self) -> None:
         """Hourly position log."""

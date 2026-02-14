@@ -1,6 +1,6 @@
 [hassette]
-base_url = "http://homeassistant:8123"
-app_dir = "/apps"
+base_url = "127.0.0.1:8123"
+app_dir = "src/hassette_examples"
 
 [apps.motion_lights]
 filename = "motion_lights.py"

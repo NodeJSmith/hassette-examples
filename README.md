@@ -6,21 +6,43 @@ This repository doubles as a **project template** — fork it and replace the ex
 
 ## Quick Start
 
+### 1. Clone and configure
+
 ```bash
 git clone https://github.com/NodeJSmith/hassette-examples.git
 cd hassette-examples
 cp .env.example .env
 ```
 
-Start the containers:
+### 2. Start Home Assistant
+
+Hassette cannot run without a long lived access token to authenticate with Home Assistant, so we need to start just the Home Assistant container first:
 
 ```bash
-docker compose up
+docker compose up homeassistant -d
 ```
 
-Home Assistant will start with the demo integration (all virtual entities) and Hassette will connect and load the example apps.
+### 3. Complete Home Assistant onboarding
 
-> **Note:** On first startup you need to create a long-lived access token in the HA UI at `http://localhost:8123/profile/security` and add it to your `.env` file.
+Open [http://localhost:8123](http://localhost:8123) and follow the [onboarding steps](https://www.home-assistant.io/getting-started/onboarding/) to create your user account. The demo integration is already enabled via `config/ha/configuration.yaml`, so demo entities will appear automatically after setup.
+
+### 4. Create an access token
+
+Once onboarding is complete, go to your profile page at [http://localhost:8123/profile/security](http://localhost:8123/profile/security) and create a **Long-Lived Access Token**. Copy the token and add it to your `.env` file:
+
+```bash
+HASSETTE__TOKEN=your_long_lived_access_token
+```
+
+### 5. Start Hassette
+
+Now bring up the full stack:
+
+```bash
+docker compose up -d
+```
+
+Hassette will connect to Home Assistant and load all 5 example apps (7 instances). You can view the Hassette dashboard at [http://localhost:8126](http://localhost:8126) and check the logs with `docker compose logs hassette -f`.
 
 ## Apps
 
@@ -68,51 +90,53 @@ Monitors lock service calls and moisture sensor alerts using synchronous pattern
 
 ## Pattern Coverage
 
-| Pattern | App 1 | App 2 | App 3 | App 4 | App 5 |
-|---------|:-----:|:-----:|:-----:|:-----:|:-----:|
-| AppConfig | x | x | x | x | x |
-| Multi-instance | x | | | x | |
-| on_state_change | x | x | x | x | x |
-| on_attribute_change | | x | | | |
-| on_call_service | | | | | x |
-| Glob patterns | | x | | | |
-| changed_to/from | x | | | | x |
-| Conditions (C) | | x | | x | |
-| Dependency injection (D) | x | x | | x | |
-| Accessors (A) | | x | | | |
-| Scheduler (various) | | x | x | x | |
-| State domain access | x | | x | x | x |
-| API calls | x | x | x | x | |
-| debounce/throttle | x | | | | x |
-| once=True | | | x | | |
-| AppSync | | | | | x |
-| Cache | | | x | | |
-| Entity objects | x | | | | |
-| Dynamic subscriptions | | | | x | |
+| Pattern                  | App 1 | App 2 | App 3 | App 4 | App 5 |
+| ------------------------ | :---: | :---: | :---: | :---: | :---: |
+| AppConfig                |   x   |   x   |   x   |   x   |   x   |
+| Multi-instance           |   x   |       |       |   x   |       |
+| on_state_change          |   x   |   x   |   x   |   x   |   x   |
+| on_attribute_change      |       |   x   |       |       |       |
+| on_call_service          |       |       |       |       |   x   |
+| Glob patterns            |       |   x   |       |       |       |
+| changed_to/from          |   x   |       |       |       |   x   |
+| Conditions (C)           |       |   x   |       |   x   |       |
+| Dependency injection (D) |   x   |   x   |       |   x   |       |
+| Accessors (A)            |       |   x   |       |       |       |
+| Scheduler (various)      |       |   x   |   x   |   x   |       |
+| State domain access      |   x   |       |   x   |   x   |   x   |
+| API calls                |   x   |   x   |   x   |   x   |       |
+| debounce/throttle        |   x   |       |       |       |   x   |
+| once=True                |       |       |   x   |       |       |
+| AppSync                  |       |       |       |       |   x   |
+| Cache                    |       |       |   x   |       |       |
+| Entity objects           |   x   |       |       |       |       |
+| Dynamic subscriptions    |       |       |       |   x   |       |
 
 ## Project Structure
 
 ```
 hassette-examples/
+├── .env.example
 ├── README.md
 ├── pyproject.toml
-├── .env.example
 ├── docker-compose.yml
 ├── config/
-│   ├── hassette.toml            # App configuration
+│   ├── hassette.toml                # App configuration
 │   └── ha/
-│       └── configuration.yaml   # HA config with demo: enabled
+│       └── configuration.yaml       # HA config with demo: enabled
 └── src/
-    ├── motion_lights.py         # App 1: Motion-Activated Lights
-    ├── climate_controller.py    # App 2: Climate Controller
-    ├── cover_scheduler.py       # App 3: Cover/Blind Scheduler
-    ├── presence_tracker.py      # App 4: Presence Tracker
-    └── security_monitor.py      # App 5: Security Monitor (AppSync)
+    └── hassette_examples/
+        ├── __init__.py
+        ├── motion_lights.py         # App 1: Motion-Activated Lights
+        ├── climate_controller.py    # App 2: Climate Controller
+        ├── cover_scheduler.py       # App 3: Cover/Blind Scheduler
+        ├── presence_tracker.py      # App 4: Presence Tracker
+        └── security_monitor.py      # App 5: Security Monitor (AppSync)
 ```
 
 ## Configuration
 
-All app configuration lives in `config/hassette.toml`. See the [Hassette documentation](https://nodejsmith.github.io/hassette/) for the full configuration reference.
+All app configuration lives in `config/hassette.toml`. See the [Hassette documentation](https://hassette.readthedocs.io/) for the full configuration reference.
 
 Environment variables in `.env` override TOML values:
 

@@ -1,11 +1,13 @@
 services:
   homeassistant:
-    container_name: demo-homeassistant
-    image: homeassistant/home-assistant:stable
+    container_name: homeassistant
+    image: "homeassistant/home-assistant:stable"
     ports:
-      - "8123:8123"
+      - "8123:8123" # so we can access the web interface - need this to creat a token if nothing else
     volumes:
-      - ./config/ha:/config
+      - ha_config:/config
+      - ./config/ha/configuration.yaml:/config/configuration.yaml
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1:8123"]
       interval: 10s
@@ -14,22 +16,23 @@ services:
       start_period: 30s
 
   hassette:
-    image: ghcr.io/nodejsmith/hassette:latest-py3.13
-    container_name: demo-hassette
+    image: ghcr.io/nodejsmith/hassette:sha-6c130e2-py3.13
+    container_name: hassette
     restart: unless-stopped
     depends_on:
       homeassistant:
         condition: service_healthy
+    ports:
+      - "8126:8126" # so we can see the dashboard
     volumes:
       - ./config:/config
-      - ./src:/apps
+      - .:/apps # use current directory for apps
       - data:/data
+      - uv_cache:/uv_cache
     environment:
+      - HASSETTE__APP_DIR=/apps/src/hassette_examples # but tell hassette where to find them
+      - HASSETTE__TOKEN=${HASSETTE__TOKEN}
       - HASSETTE__BASE_URL=http://homeassistant:8123
-      - HASSETTE__TOKEN=${HA_TOKEN}
-      - HASSETTE__APP_DIR=/apps
-      - TZ=America/New_York
-      - LOG_LEVEL=info
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1:8126/healthz"]
       interval: 10s
@@ -37,4 +40,6 @@ services:
       retries: 3
 
 volumes:
+  uv_cache:
   data:
+  ha_config:
