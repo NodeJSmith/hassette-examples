@@ -2,6 +2,14 @@
 base_url = "127.0.0.1:8123"
 app_dir = "src/hassette_examples"
 
+# Telemetry database — keep 14 days of handler/job execution history
+db_retention_days = 14
+db_max_size_mb = 100
+
+# Per-service log levels — quiet noisy services, verbose for debugging
+scheduler_service_log_level = "WARNING"
+websocket_log_level = "WARNING"
+
 [apps.motion_lights]
 filename = "motion_lights.py"
 class_name = "MotionLights"

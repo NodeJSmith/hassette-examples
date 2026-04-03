@@ -68,7 +68,7 @@ Monitors outdoor and HVAC temperatures to manage an AC switch.
 
 Automates covers/blinds on a daily schedule — opens on weekday mornings, closes at night.
 
-**Patterns:** `run_cron`, `run_daily`, `run_hourly`, `run_in`, `once=True`, cache persistence, state iteration (`for entity_id, cover in self.states.cover`), lifecycle hooks (`on_shutdown`)
+**Patterns:** `run_cron`, `run_daily`, `run_hourly`, `run_in`, `if_exists="skip"` (idempotent registration), `once=True`, cache persistence, state iteration (`for entity_id, cover in self.states.cover`), lifecycle hooks (`on_shutdown`)
 
 **Entities:** `cover.kitchen_window`, `cover.hall_window`, `cover.living_room_window`, `sun.sun`
 
@@ -111,6 +111,7 @@ Monitors lock service calls and moisture sensor alerts using synchronous pattern
 | Cache                    |       |       |   x   |       |       |
 | Entity objects           |   x   |       |       |       |       |
 | Dynamic subscriptions    |       |       |       |   x   |       |
+| if_exists (idempotent)   |       |       |   x   |       |       |
 
 ## Project Structure
 
