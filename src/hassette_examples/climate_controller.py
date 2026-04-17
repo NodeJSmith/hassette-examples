@@ -58,8 +58,10 @@ class ClimateController(App[ClimateControllerConfig]):
             handler=self.on_hvac_temp_change,
         )
 
-        # Periodic climate summary
-        self.scheduler.run_every(self.log_climate_summary, cfg.check_interval, name="climate_summary")
+        # Periodic climate summary — group for easy filtering in the dashboard
+        self.scheduler.run_every(
+            self.log_climate_summary, cfg.check_interval, name="climate_summary", group="monitoring",
+        )
 
     async def on_temp_increased(
         self,

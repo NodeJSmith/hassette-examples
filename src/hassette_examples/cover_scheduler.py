@@ -35,28 +35,32 @@ class CoverScheduler(App[CoverSchedulerConfig]):
         if cached:
             self.logger.info("Restored cached cover positions: %s", cached)
 
-        # Open covers on weekday mornings (Mon-Fri, cron day_of_week 1-5)
+        # Open covers on weekday mornings (Mon-Fri)
         # if_exists="skip" makes this safe to call on app reload — if the job
         # already exists from a prior initialize(), it's silently skipped.
+        # group="covers" lets users filter/view cover-related jobs together.
         self.scheduler.run_cron(
             self.open_all_covers,
-            minute=cfg.morning_open_minute,
-            hour=cfg.morning_open_hour,
-            day_of_week="1-5",
+            f"{cfg.morning_open_minute} {cfg.morning_open_hour} * * 1-5",
             name="morning_open",
+            group="covers",
             if_exists="skip",
         )
 
         # Close covers every night
         self.scheduler.run_daily(
             self.close_all_covers,
-            start=(cfg.night_close_hour, cfg.night_close_minute),
+            at=f"{cfg.night_close_hour:02d}:{cfg.night_close_minute:02d}",
             name="night_close",
+            group="covers",
             if_exists="skip",
         )
 
-        # Log cover positions every hour
-        self.scheduler.run_hourly(self.log_cover_positions, name="position_log", if_exists="skip")
+        # Log cover positions every hour — jitter=30 spreads the check slightly
+        # to avoid simultaneous API calls if multiple instances are running
+        self.scheduler.run_hourly(
+            self.log_cover_positions, name="position_log", group="monitoring", jitter=30, if_exists="skip",
+        )
 
         # One-time sun state report 10 seconds after startup
         self.scheduler.run_in(self.report_sun_state, 10, name="startup_sun_report")

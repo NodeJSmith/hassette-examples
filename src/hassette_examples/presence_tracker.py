@@ -41,8 +41,10 @@ class PresenceTracker(App[PresenceTrackerConfig]):
             handler=self.on_tracker_change,
         )
 
-        # Periodic status log
-        self.scheduler.run_every(self.log_status, cfg.status_interval, name=f"{cfg.person_name}_status")
+        # Periodic status log — group for easy filtering in the dashboard
+        self.scheduler.run_every(
+            self.log_status, cfg.status_interval, name=f"{cfg.person_name}_status", group="tracking",
+        )
 
         # Create a custom presence sensor
         tracker_state = self.states.device_tracker.get(cfg.tracker_entity)
